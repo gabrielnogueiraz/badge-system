@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crachá</title>
+    <style>
+        /* Reset básico */
+        body, h1, p, input, button {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        #cracha {
+            width: 300px;
+            height: 400px;
+            background-image: url('cracha-template.png'); /* Substitua pelo caminho da sua imagem */
+            background-size: cover;
+            background-position: center;
+            border: 2px solid #333;
+            position: relative;
+            margin: 0 auto;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        #foto {
+            width: 140px;
+            height: 170px;
+            border: 2px solid #000;
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 54.5%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 5px;
+        }
+
+        #nome {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            top: 89%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+        }
+
+        #dataAdmissao {
+            position: absolute;
+            bottom: 1px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="date"], input[type="file"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            #cracha, #cracha * {
+                visibility: visible;
+            }
+            
+            #cracha {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                border: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            @page {
+                size: auto;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="cracha">
+            <div id="foto"></div>
+            <div id="nome">Nome do Funcionário</div>
+            <div id="dataAdmissao">Data de Admissão</div>
+        </div>
+
+        <form>
+            <label for="fotoInput">Escolha uma foto:</label>
+            <input type="file" id="fotoInput" accept="image/*">
+
+            <label for="nomeInput">Nome:</label>
+            <input type="text" id="nomeInput" placeholder="Digite o nome">
+
+            <label for="dataInput">Data de Admissão:</label>
+            <input type="date" id="dataInput">
+
+            <button type="button" onclick="gerarCracha()">Gerar Crachá</button>
+            <button type="button" onclick="baixarCracha()">Baixar Crachá</button>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.0/html2canvas.min.js"></script>
+    <script>
+        function gerarCracha() {
+            // Atualiza o nome
+            const nome = document.getElementById('nomeInput').value;
+            document.getElementById('nome').innerText = nome;
+
+            // Atualiza a data de admissão no formato dd-mm-aaaa
+            const dataAdmissaoInput = document.getElementById('dataInput').value;
+            if (dataAdmissaoInput) {
+                const data = new Date(dataAdmissaoInput);
+                const dia = String(data.getDate()).padStart(2, '0');
+                const mes = String(data.getMonth() + 1).padStart(2, '0');
+                const ano = data.getFullYear();
+                const dataFormatada = `${dia}-${mes}-${ano}`;
+                document.getElementById('dataAdmissao').innerText = dataFormatada;
+            }
+
+            // Atualiza a foto
+            const fotoInput = document.getElementById('fotoInput');
+            const foto = document.getElementById('foto');
+
+            if (fotoInput.files && fotoInput.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    foto.style.backgroundImage = `url(${e.target.result})`;
+                };
+
+                reader.readAsDataURL(fotoInput.files[0]);
+            }
+        }
+
+        function baixarCracha() {
+            html2canvas(document.getElementById('cracha'), { allowTaint: true }).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = 'cracha.png';
+                document.body.appendChild(link); // Necessário para Firefox
+                link.click();
+                document.body.removeChild(link); // Necessário para Firefox
+            }).catch(error => {
+                console.error('Erro ao gerar a imagem do crachá:', error);
+            });
+        }
+    </script>
+
+</body>
+</html>
