@@ -38,7 +38,7 @@
             background-image: url('cracha-template.png'); /* Substitua pelo caminho da sua imagem */
             background-size: cover;
             background-position: center;
-            border: 2px solid #333;
+            border: 2px solid #333; 
             position: relative;
             margin: 0 auto;
             border-radius: 10px;
@@ -76,9 +76,9 @@
             bottom: 13px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 18px;
+            font-size: 16px;
             color: #fff;
-            font-weight: bold;
+            font-weight: lighter;
             text-align: center;
             width: 100%;
         }
@@ -181,7 +181,7 @@
                 const dia = String(data.getDate()).padStart(2, '0');
                 const mes = String(data.getMonth() + 1).padStart(2, '0');
                 const ano = data.getFullYear();
-                const dataFormatada = `${dia}-${mes}-${ano}`;
+                const dataFormatada = `Admissão: ${dia}/${mes}/${ano}`;
                 document.getElementById('dataAdmissao').innerText = dataFormatada;
             }
 
